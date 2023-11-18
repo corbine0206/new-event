@@ -20,7 +20,7 @@
                     mysqli_free_result($result);
                 }
                 else{
-                    $message = "NO USER FOUND";
+                    $message = "You are not registered on this event!";
                 }
             }
 
@@ -195,100 +195,89 @@ if (isset($_POST['btnSubmit'])) {
     
 }
 ?>
-
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="http://localhost/js/tailwind.config.js"></script>
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 
     <style>
         /* Style for the dropdown menus */
-        .tech-dropdown {
-            display: none;
-        }
+
         .body {
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
         }
-        .larger-card {
-            padding: 20px;
-            margin: 0 auto;
-        }
-        .larger-text {
-            font-size: 40px;
-            font-family: sans-serif;
-            white-space: nowrap;
-        }
-        .larger-checkbox {
-            width: 1.5em;
-            height: 1.5em;
-            margin-right: 10px;
-            vertical-align: middle;
-        }
-        .larger-dropdown {
-            font-size: 30px;
-            font-family: sans-serif;
-            white-space: nowrap;
-        }
+        
     </style>
 <body id="page-top">
-
+<section class="bg-cover" style="background-image: url('https://media-s3-us-east-1.ceros.com/g3-communications/images/2021/04/21/bf088fa43296be6d4cee5685a37e6a30/untitled.gif');">
     <!-- Page Wrapper -->
     <div id="wrapper">
 
-        <?php //include 'sidebar.php'; ?>
 
         <!-- Content Wrapper -->
         <div id="content-wrapper" class="d-flex flex-column body">
 
             <div id="content" class="container">
                 <div class="d-flex align-items-center justify-content-center">
-                    <div class="larger-card card">
-                        <div class="card-body text-center">
-                            <?php
-                            if (isset($message)) {
-                                echo $message;
+                    <div class="w-full max-w-sm p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-6 dark:bg-gray-800 dark:border-gray-700">         
+                        <?php
+                        if (isset($message)) {
+                            echo '<h5 class="mb-3 text-base font-semibold text-gray-900 md:text-l dark:text-white">Sorry, you are not registered in this event!</h5>';
+                            echo '<p class="mb-3 text-sm font-normal text-gray-500 dark:text-gray-400">Please check your email again or contact the event organizer for more details. Thank you!</p>'; 
+                            echo '<img class="h-auto max-w-full mx-auto" src="https://media4.giphy.com/media/Bc4oup2pdP5iKFAYiF/200w.gif?cid=6c09b9520ewqcrypuassw0qj1nck4jcukefjjr5322adfum0&ep=v1_gifs_search&rid=200w.gif&ct=g" alt="image description">';
+                        } else {
+                            if ($reqPersons['status'] == 1) {
+                                echo '<h5 class="mb-3 text-base font-semibold text-gray-900 md:text-l dark:text-white">Thank you for sharing your Interest with us!!</h5>';
+                                echo '<p class="mb-3 text-sm font-normal text-gray-500 dark:text-gray-400">We will send you a journey map for the event based on your interest.</p>'; 
+                                echo '<img class="h-auto max-w-full mx-auto" src="https://assets-global.website-files.com/6091b7081a1d7e13ccd7603a/63f018f7c54c02f7cdc1c256_giphy-3.gif" alt="image description">';
+                            } elseif (isset($message)) {
+                                echo "No email and event ID found";
                             } else {
-                                if ($reqPersons['status'] == 1) {
-                                    echo "You already answered the form";
-                                } elseif (isset($message)) {
-                                    echo "No email and event ID found";
-                                } else {
-                            ?>
-                            <form method="post">
-                                <input type="hidden" value="<?php echo $_GET['eventID'] ?>" name="event_id">
-                                <input type="hidden" value="<?php echo $_GET['email'] ?>" name="email">
-                                <div class="form-group">
-                                    <?php
-                                    $con = openConnection();
+                        ?>
+                        <h5 class="mb-3 text-base font-semibold text-gray-900 md:text-xl dark:text-white">
+                        Interest Survey Form
+                        </h5>
+                        <p class="mb-3 text-sm font-normal text-gray-500 dark:text-gray-400">Tell us your interest and we'll take care of the rest!!</p>
 
-                                    // Retrieve distinct technologies from the event_session table
-                                    $strSql = "SELECT DISTINCT technology FROM event_sessions where event_id = '$event_id'";
-                                    $result = getRecord($con, $strSql);
+                        <form method="post">
+                            <input type="hidden" value="<?php echo $_GET['eventID'] ?>" name="event_id">
+                            <input type="hidden" value="<?php echo $_GET['email'] ?>" name="email">
+                            <div class="form-group">
+                                <?php
+                                $con = openConnection();
 
-                                    // Loop through the distinct technologies and create a dropdown for each
-                                    foreach ($result as $key => $value) {
-                                        $techName = $value['technology'];
-                                        $techNameFormatted = str_replace(' ', '_', $techName);
-                                        
-                                        // Query the event_session table for technology lines related to the current technology
-                                        $dropdownSql = "SELECT DISTINCT technology_line FROM event_sessions WHERE technology = '$techName'";
-                                        $dropdownResult = getRecord($con, $dropdownSql);
-                                        echo '<label for="technology[]" class="form-check label-with-padding">';
-                                        echo '<input type="checkbox" class="form-check-input larger-checkbox" name="technology[]" id="technology_' . $techNameFormatted . '" value="' . $techNameFormatted . '">';
-                                        echo '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' . $techName;
-                                        echo '</label>';
+                                // Retrieve distinct technologies from the event_session table
+                                $strSql = "SELECT DISTINCT technology FROM event_sessions where event_id = '$event_id'";
+                                $result = getRecord($con, $strSql);
 
-                                        // Create the dropdown menu
-                                        echo '<select class="tech-dropdown form-control" name="dropdown_' . $techNameFormatted  . '">';
-                                        foreach ($dropdownResult as $dropdownKey => $dropdownValue) {
-                                            $optionValue = $dropdownValue['technology_line'];
-                                            echo '<option value="' . $optionValue . '">' . $optionValue . '</option>';
-                                        }
-                                        echo '</select>';
+                                // Loop through the distinct technologies and create a dropdown for each
+                                foreach ($result as $key => $value) {
+                                    $techName = $value['technology'];
+                                    $techNameFormatted = str_replace(' ', '_', $techName);
+                                    
+                                    // Query the event_session table for technology lines related to the current technology
+                                    $dropdownSql = "SELECT DISTINCT technology_line FROM event_sessions WHERE technology = '$techName'";
+                                    $dropdownResult = getRecord($con, $dropdownSql);
+                                    echo '<div class="mb-3 flex items-center p-3 text-base font-bold text-gray-900 rounded-lg bg-gray-50 hover:bg-gray-100 group hover:shadow dark:bg-gray-600 dark:hover:bg-gray-500 dark:text-white">';
+                                    echo '<label for="technology[]" class="ms-2 mb-0 text-sm font-medium text-gray-900 dark:text-gray-300">';
+                                    echo '<input type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" name="technology[]" id="technology_' . $techNameFormatted . '" value="' . $techNameFormatted . '">';
+                                    echo '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' . $techName;
+                                    echo '</label>';
+                                    echo '</div>';
+
+                                    // Create the dropdown menu
+                                    echo '<select class="mb-3 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 hidden ..." name="dropdown_' . $techNameFormatted  . '">';
+                                    foreach ($dropdownResult as $dropdownKey => $dropdownValue) {
+                                        $optionValue = $dropdownValue['technology_line'];
+                                        echo '<option value="' . $optionValue . '">' . $optionValue . '</option>';
                                     }
-                                    ?>
-                                </div>
-                                <button type="submit" class="btn btn-primary btn-lg" name="btnSubmit">Submit</button>
+                                    echo '</select>';
+                                    
+                                }
+                                ?>
+                                <button type="submit"  class="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800" name="btnSubmit">Submit Form</button>
                             </form>
                         </div>
                     </div>
@@ -303,7 +292,7 @@ if (isset($_POST['btnSubmit'])) {
     <a class="scroll-to-top rounded" href="#page-top">
         <i class="fas fa-angle-up"></i>
     </a>
-
+    </section>
     <?php //include 'script.php'; ?>
 
     <!-- Include Bootstrap JS -->

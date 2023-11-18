@@ -102,107 +102,106 @@
         });
     });
 </script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="http://localhost/js/tailwind.config.js"></script>
 
 
 <!-- Your HTML code remains unchanged -->
-
+<!-- https://wp.technologyreview.com/wp-content/uploads/2019/04/mit-final-gif-tsjisse-talsma-10.gif-->
 <body id="page-top">
+    <section class="bg-white dark:bg-gray-900 p-10 flex justify-center ...  bg-cover" style="background-image: url('https://media-s3-us-east-1.ceros.com/g3-communications/images/2021/04/21/bf088fa43296be6d4cee5685a37e6a30/untitled.gif');">      
+        <?php
+            $connection = openConnection();
+            $attendance = getAttendance($connection, $email, $event_id);
+            if (!empty($attendance)){ ?>
+                <div class="w-full max-w-5xl p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-6 dark:bg-gray-800 dark:border-gray-700">
+                    <h2 class="mb-4 text-4xl tracking-tight font-extrabold text-center text-gray-900 dark:text-white">Thank you for attending the event!!</h2>
+                    <p class="mb-8 lg:mb-16 font-light text-center text-gray-500 dark:text-gray-400 sm:text-xl">Hope you had a great time, let us know what you think about the event. Cheers!!!</p>
+                    <form method="post">
+                        <div class="form-group">
+                            <label for="card-body-survey" class="block mb-2 text-m font-bold text-gray-900 dark:text-gray-400">Which of the sessions you've attended did you enjoy the most?</label>
+                            <div class="card-body" id="card-body-survey">
+                                <?php
+                                $printedSessions = []; // Create an array to track printed session titles
 
-    <!-- Page Wrapper -->
-    <div>
+                                foreach ($attendance as $value) {
+                                    $session_title = $value['session_title'];
 
-        <?php //include 'sidebar.php'; ?>
-
-        <!-- Content Wrapper -->
-        <div id="content-wrapper" class="d-flex flex-column">
-            <div class="container mt-5 col-sm-12">
-                <div class="row">
-                    <div class="col-md-6 offset-md-3">
-                        <?php
-                        $connection = openConnection();
-                        $attendance = getAttendance($connection, $email, $event_id);
-                        if (!empty($attendance)){ ?>
-                            <form method="post">
-                                <div class="row card">
-                                    <label for="card-body-survey">Which of the sessions did you enjoy? Why?</label>
-                                    <div class="card-body" id="card-body-survey">
-                                        <?php
-                                        $printedSessions = []; // Create an array to track printed session titles
-
-                                        foreach ($attendance as $value) {
-                                            $session_title = $value['session_title'];
-
-                                            // Check if the session title has already been printed
-                                            if (!in_array($session_title, $printedSessions)) {
-                                                // Mark the session title as printed
-                                                $printedSessions[] = $session_title;
-                                                ?>
-                                                <label>
-                                                    <input type="checkbox" class="session-checkbox" data-session="<?php echo $session_title; ?>" name="session[]" value="<?php echo $session_title; ?>"><?php echo $session_title; ?>
-                                                </label>
-                                                <div class="tech-checkboxes hidden" data-session="<?php echo $session_title; ?>">
+                                    // Check if the session title has already been printed
+                                    if (!in_array($session_title, $printedSessions)) {
+                                        // Mark the session title as printed
+                                        $printedSessions[] = $session_title;
+                                        ?>
+                                        <label class="mb-2 flex items-center p-3 text-base font-bold text-gray-900 rounded-lg bg-gray-50 hover:bg-gray-100 group hover:shadow dark:bg-gray-600 dark:hover:bg-gray-500 dark:text-white">
+                                            <input type="checkbox" class="session-checkbox mx-1" data-session="<?php echo $session_title; ?>" name="session[]" value="<?php echo $session_title; ?>"><?php echo $session_title; ?>
+                                        </label>
+                                        <div class="tech-checkboxes hidden" data-session="<?php echo $session_title; ?>">
+                                            <div class="w-full max-w mb-2 p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-6 dark:bg-gray-800 dark:border-gray-700">
+                                                <p class="text-m font-normal text-gray-900 dark:text-gray-400">What topics from this session do you thinks would be useful to you?</p>
+                                            
+                                                    <div class="columns-2 p-2">
                                                     <?php
                                                     $technologies = getTechnologiesLine($connection, $session_title);
                                                     foreach ($technologies as $checkboxValue) {
                                                     ?>
+                                                    <div class="w-full flex mb-1 items-center ps-4 border border-gray-200 rounded dark:border-gray-700">
+                                                        <label for="technology_line[]" class="w-full py-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                                                            <input class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" type="checkbox"  name="technology_line[]" id="technology_<?php echo $checkboxValue['technology_line']; ?>" value="<?php echo $checkboxValue['technology_line']; ?>">
+                                                            <?php echo $checkboxValue['technology_line']; ?>
+                                                        </label>
+                                                    </div>
+                                                    <?php  } ?>
+                                                </div>
 
-                                                    <label for="technology_line[]">
-                                                        <input type="checkbox" name="technology_line[]" id="technology_<?php echo $checkboxValue['technology_line']; ?>" value="<?php echo $checkboxValue['technology_line']; ?>">
-                                                        <?php echo $checkboxValue['technology_line']; ?>
-                                                    </label>
-                                                    <?php
-                                                    }
-                                                    ?>
-                                                </div><br>
-                                                <?php
-                                            }
-                                        }
-                                        ?>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="comment">Comment:</label>
-                                    <textarea class="form-control" id="comment" name="comment" rows="4" required></textarea>
-                                </div>
-                                <div class="form-group">
-                                    <label for="suggestion">Suggestion:</label>
-                                    <textarea class="form-control" id="suggestion" name="suggestion" rows="4" required></textarea>
-                                </div>
-                                <div class="form-group">
-                                    <label for="S_event">Would you go to a similar event in the future:</label>
-                                    <input class="form-control" id="S_event" name="S_event" required></input>
-                                </div>
-                                <button type="submit" class="btn btn-primary" name="btnSubmit">Submit</button>
-                            </form>
-                        <?php
-                        }
-                        else{
-                            echo '
-                                <div class="col-md-12 d-flex justify-content-center align-items-center vh-100">
-                                    <div class="card bg-primary">
-                                        <div class="card-body text-center">
-                                        <h5>No Session attended</h5>
+                                            </div>
                                         </div>
-                                    </div>
-                                </div>
-                                ';
-                        }
-                        ?>
-                    </div>
-
+                                        <?php
+                                    }
+                                }
+                                ?>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="comment" class="block mb-2 text-m font-bold text-gray-900 dark:text-gray-400">Comment:</label>
+                            <textarea placeholder="Share us your thoughts..." class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg shadow-sm border border-gray-300 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" id="comment" name="comment" rows="4" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="suggestion" class="block mb-2 text-m font-bold text-gray-900 dark:text-gray-400">Suggestion:</label>
+                            <textarea placeholder="Let us know what you think..." class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg shadow-sm border border-gray-300 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" id="suggestion" name="suggestion" rows="4" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="message" class="block mb-2 text-m font-bold text-gray-900 dark:text-gray-400">Your message</label>
+                            <input class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg shadow-sm border border-gray-300 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" id="S_event" name="S_event" required></input>
+                        </div>
+                        <button type="submit" class="py-3 px-5 text-m font-bold text-center text-white rounded-lg bg-primary-700 sm:w-fit hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800" name="btnSubmit">Submit</button>
+                    </form>
                 </div>
-            </div>
-        </div>
-        <!-- End of Content Wrapper -->
+        
+            <?php
+            }
+            else{
+                echo '
+                    <div class="col-md-12 d-flex justify-content-center align-items-center vh-100">
+                        <div class="card bg-primary">
+                            <div class="w-full max-w-sm p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-6 dark:bg-gray-800 dark:border-gray-700">
+                                <h5 class="mb-3 text-base font-semibold text-gray-900 md:text-l dark:text-white">Sorry, you did not attend this event!</h5>
+                                <p class="mb-3 text-sm font-normal text-gray-500 dark:text-gray-400">Please check your email again or contact the event organizer for more details. Thank you!</p>
+                                <img class="h-auto max-w-full mx-auto" src="https://media4.giphy.com/media/Bc4oup2pdP5iKFAYiF/200w.gif?cid=6c09b9520ewqcrypuassw0qj1nck4jcukefjjr5322adfum0&ep=v1_gifs_search&rid=200w.gif&ct=g" alt="image description">
+                            </div>
+                        </div>
+                    </div>
+                    ';
+            }
+        ?>
+        <!-- Page Wrapper -->
+        <!-- End of Page Wrapper -->
 
-    </div>
-    <!-- End of Page Wrapper -->
-
-    <!-- Scroll to Top Button-->
-    <a class="scroll-to-top rounded" href="#page-top">
-        <i class="fas fa-angle-up"></i>
-    </a>
-    <?php include'script.php'; ?>
+        <!-- Scroll to Top Button-->
+        <a class="scroll-to-top rounded" href="#page-top">
+            <i class="fas fa-angle-up"></i>
+        </a>
+        <?php include'script.php'; ?>
+    </section>
 </body>
 
 <?php
