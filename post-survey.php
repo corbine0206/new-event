@@ -66,41 +66,38 @@
       min-height: 100vh;
     }
 
-/* Add this CSS to your stylesheet or within a <style> tag in your HTML */
-
-
 </style>
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        var checkboxes = document.querySelectorAll('.session-checkbox');
+document.addEventListener("DOMContentLoaded", function () {
+    var checkboxes = document.querySelectorAll('.session-checkbox');
 
-        checkboxes.forEach(function (checkbox) {
-            checkbox.addEventListener("change", function () {
-                var sessionId = this.getAttribute('data-session');
-                var techCheckboxes = document.querySelectorAll('.tech-checkboxes[data-session="' + sessionId + '"] input[type="checkbox"]');
-                var techLabels = document.querySelectorAll('.tech-checkboxes[data-session="' + sessionId + '"] label');
+    checkboxes.forEach(function (checkbox) {
+        checkbox.addEventListener("change", function () {
+            var sessionId = this.getAttribute('data-session');
+            var techCheckboxes = document.querySelectorAll('.tech-checkboxes[data-session="' + sessionId + '"] input[type="checkbox"]');
+            var techLabels = document.querySelectorAll('.tech-checkboxes[data-session="' + sessionId + '"] label');
+            var sessionPTag = document.querySelector('.tech-checkboxes[data-session="' + sessionId + '"] p');
+            var techCheckboxesDiv = document.querySelector('.tech-checkboxes[data-session="' + sessionId + '"]');
 
-                techCheckboxes.forEach(function (techCheckbox, index) {
-                    // Toggle the hidden class to show/hide the checkboxes
-                    techCheckbox.classList.toggle("hidden", !this.checked);
-                    // Enable/disable the checkboxes based on the session checkbox
-                    techCheckbox.disabled = !this.checked;
+            techCheckboxes.forEach(function (techCheckbox, index) {
+                // Toggle the hidden class to show/hide the checkboxes
+                techCheckbox.classList.toggle("hidden", !this.checked);
+                // Enable/disable the checkboxes based on the session checkbox
+                techCheckbox.disabled = !this.checked;
 
-                    // Toggle the hidden class for the associated labels
-                    techLabels[index].classList.toggle("hidden", !this.checked);
+                // Toggle the hidden class for the associated labels
+                techLabels[index].classList.toggle("hidden", !this.checked);
+            }.bind(this));
 
-                    // Log the sessionId and checkbox visibility
-                    console.log("Session ID:", sessionId);
-                    console.log("Checkbox Hidden:", techCheckbox.classList.contains("hidden"));
-                    // Remove the "hidden" class from the .tech-checkboxes div when the session checkbox is checked
-                    var techCheckboxesDiv = document.querySelector('.tech-checkboxes[data-session="' + sessionId + '"]');
-                    if (this.checked) {
-                        techCheckboxesDiv.classList.remove("hidden");
-                    }
-                }.bind(this));
-            });
+            // Toggle the visibility of the <p> tag based on checkbox state
+            sessionPTag.classList.toggle("hidden", !this.checked);
+
+            // Toggle the visibility of the .tech-checkboxes div based on checkbox state
+            techCheckboxesDiv.classList.toggle("hidden", !this.checked);
         });
     });
+});
+
 </script>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="http://localhost/js/tailwind.config.js"></script>
