@@ -80,7 +80,6 @@
                                                 <td>' . $session['timepm'] . '</td>
                                                 <td>
                                                 <a href="scan.php?eventID=' . $event_id . '&session_title='. $session['session_title'] .'" class="btn btn-info"><i class="fas fa-qrcode"></i></a>
-                                                <a href="participants.php?eventID=' . $event_id . '&session_title='. $session['session_title'] .'" class="btn btn-warning"><i class="fas fa-users"></i></a>
                                                 </td>
                                             </tr>';
                                         }
